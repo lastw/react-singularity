@@ -1,0 +1,1 @@
+export { createAtomFactory } from './atom';
