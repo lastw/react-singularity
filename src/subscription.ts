@@ -1,4 +1,4 @@
-type Listener<T> = (value: T) => void;
+export type Listener<T> = (value: T) => void;
 
 export type Subscription<T> = {
   notify: Listener<T>;
