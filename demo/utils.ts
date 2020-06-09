@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { createAtomFactory } from '../dist';
+import { createAtomFactory, createSingularityFactory } from '../dist';
 
 export const atom = createAtomFactory({ useState, useEffect });
+export const singularity = createSingularityFactory({ useState, useEffect });
 
 export const config = {
   concurrent: false,
   size: 40,
   replicas: 2,
+  example: 'interactive-grid',
 };
 
 /**
@@ -27,6 +29,9 @@ query.forEach((param) => {
     case 'replicas':
       config.replicas = Number(value) || config.replicas;
       break;
+    case 'example':
+      config.example = value || config.example;
+      break;
   }
 });
 
@@ -36,5 +41,5 @@ export const buildQuery = (part: Partial<typeof config>) => {
     ...part,
   };
 
-  return `?size=${c.size}&replicas=${c.replicas}&concurrent=${c.concurrent}`;
+  return `?size=${c.size}&replicas=${c.replicas}&concurrent=${c.concurrent}&example=${c.example}`;
 };

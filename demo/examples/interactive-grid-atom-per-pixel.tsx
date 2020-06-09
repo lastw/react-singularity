@@ -1,25 +1,28 @@
-import React, { useCallback, useMemo } from 'react';
-import { atom, config, buildQuery } from '../utils';
+import React, { useCallback, useMemo, useEffect } from 'react';
+import { atom, config, buildQuery, singularity } from '../utils';
 
 const { size, replicas, concurrent } = config;
 
-/**
- * Not the most performant solution:
- * Every component subscribes to 3 shared atoms.
- */
 const $hcol = atom(-1); // highlighted column index
 const $hrow = atom(-1); // highlighted row index
 const $cursor = atom(-1); // highlighted cell index
 
-function step() {
-  $cursor.set((c) => (c + 1) % (size * size));
+const $cells = singularity(() => [false, false]); // isCursor, isHighlighted
 
-  window.requestAnimationFrame(step);
-}
+export const InteractiveGridAtomPerPixelApp = () => {
+  useEffect(() => {
+    function step() {
+      $cells.set($cursor.get(), ([_, h]) => [false, h]);
 
-step();
+      $cursor.set((c) => (c + 1) % (size * size));
 
-export const InteractiveGridApp = () => {
+      $cells.set($cursor.get(), ([_, h]) => [true, h]);
+
+      window.requestAnimationFrame(step);
+    }
+
+    step();
+  }, []);
   return (
     <div className="app">
       <Header />
@@ -44,7 +47,7 @@ const Header = () => {
       <p>
         Size: {size}×{size}, Replicas: {replicas} (total components: {size * size * replicas})
       </p>
-      <p style={{ color: '#393' }}>3 atoms:</p>
+      <p style={{ color: '#933' }}>Atom per pixel: {size * size} atoms total, +3 for:</p>
       <p>
         Highlighted column: {hc}, Highlighted row: {hr}, Cursor: {c}
       </p>
@@ -72,25 +75,40 @@ const Cell = (props: { index: number }) => {
   }, [index]);
 
   const onMouseEnter = useCallback(() => {
+    const hcol = $hcol.get();
+    const hrow = $hrow.get();
+
+    // naive (and buggy) solution:
+    // unhighlight previous column/row, highlight current
+    for (let i = 0; i < size; i++) {
+      if (hcol !== column && i !== row) {
+        $cells.set(i * size + hcol, ([c, _]) => [c, false]);
+        $cells.set(i * size + column, ([c, _]) => [c, true]);
+      }
+
+      if (hrow !== row && i !== column) {
+        $cells.set(hrow * size + i, ([c, _]) => [c, false]);
+        $cells.set(row * size + i, ([c, _]) => [c, true]);
+      }
+    }
+
     $hcol.set(() => column);
     $hrow.set(() => row);
   }, []);
 
-  const isColumnHighlighted = $hcol.use(useCallback((v) => v === column, []));
-  const isRowHighlighted = $hrow.use(useCallback((v) => v === row, []));
-  const isCursor = $cursor.use(useCallback((v) => v === index, []));
+  const [isCursor, isHighlighted] = $cells.use(index);
 
   const className = useMemo(() => {
     if (isCursor) {
       return '_cursor';
     }
 
-    if (isColumnHighlighted || isRowHighlighted) {
+    if (isHighlighted) {
       return '_highlighted';
     }
 
     return undefined;
-  }, [isColumnHighlighted, isRowHighlighted, isCursor]);
+  }, [isCursor, isHighlighted]);
 
   return <i onMouseEnter={onMouseEnter} className={className} />;
 };
