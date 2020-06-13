@@ -1,2 +1,2 @@
-export { createAtomFactory } from './atom';
-export { createSingularityFactory } from './singularity';
+export { createAtomFactory, Atom } from './atom';
+export { createSingularityFactory, Singularity } from './singularity';

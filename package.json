@@ -23,9 +23,9 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "name": "singularity",
+  "name": "react-singularity",
   "author": "Vlad Sapozhnikov",
-  "module": "dist/singularity.esm.js",
+  "module": "dist/react-singularity.esm.js",
   "devDependencies": {
     "@types/react": "^16.9.35",
     "husky": "^4.2.5",
