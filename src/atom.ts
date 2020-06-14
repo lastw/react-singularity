@@ -27,7 +27,7 @@ export const createAtomFactory = (params: {
 
     return {
       use: (selector = identity) => {
-        const [x, setX] = useState<any>(selector(get()));
+        const [x, setX] = useState(selector(get()));
 
         useEffect(() => sub.subscribe((v) => setX(selector(v))), [selector]);
 

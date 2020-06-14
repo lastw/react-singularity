@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { SingularityApp } from './examples/singularity';
 import { SimpleCounterApp } from './examples/simple-counter';
 import { InteractiveGridApp } from './examples/interactive-grid';
 import { InteractiveGridAtomPerPixelApp } from './examples/interactive-grid-atom-per-pixel';
@@ -13,6 +14,8 @@ const Example = (() => {
       return InteractiveGridAtomPerPixelApp;
     case 'simple-counter':
       return SimpleCounterApp;
+    case 'singularity':
+      return SingularityApp;
     default:
       return InteractiveGridApp;
   }
@@ -20,6 +23,7 @@ const Example = (() => {
 
 const Nav = () => (
   <header>
+    <a href={buildQuery({ example: 'singularity' })}>Simple singularity</a>,{' '}
     <a href={buildQuery({ example: 'simple-counter' })}>Simple counter</a>,{' '}
     <a href={buildQuery({ example: 'interactive-grid' })}>Interactive grid</a>,{' '}
     <a href={buildQuery({ example: 'interactive-grid-atom-per-pixel' })}>

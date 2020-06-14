@@ -19,24 +19,34 @@ export const createSingularityFactory = (params: {
   useEffect: typeof React.useEffect;
 }) => {
   const atom = createAtomFactory(params);
+  const { useState, useEffect } = params;
 
   return <T>(def: (key: Key) => T): Singularity<T> => {
     const atoms: Record<Key, Atom<T>> = {};
 
     const ensure = (key: Key) => (atoms[key] = atoms[key] || atom(def(key)));
-
     const get = (key: Key) => ensure(key).get();
+    const identity = (x: T) => x;
 
     return {
-      use: <U>(key: Key, selector?: (value: T) => U) => {
-        return ensure(key).use(selector);
+      use: (key: Key, selector = identity) => {
+        const [x, setX] = useState(() => selector(ensure(key).get()));
+        const [prevKey, setPrevKey] = useState(key);
+
+        useEffect(() => ensure(key).subscribe((v) => setX(selector(v))), [key, selector]);
+
+        if (prevKey !== key) {
+          setPrevKey(key);
+          setX(selector(ensure(key).get()));
+        }
+
+        return x;
       },
 
       get,
 
       set: (key: Key, fn: (value: T) => T) => {
-        const atom = ensure(key);
-        atom.set(fn);
+        ensure(key).set(fn);
       },
 
       dump: () => {
