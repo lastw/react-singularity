@@ -36,6 +36,7 @@ export const subscription = <T>(): Subscription<T> => {
       return () => {
         if (node.prev && node.next) {
           node.prev.next = node.next;
+          node.next.prev = node.prev;
         } else if (node.prev) {
           last = node.prev;
           last.next = undefined;
