@@ -10,13 +10,13 @@ Ascetic shared state management library for React.
 npm i react-singularity
 ```
 
-At the moment this library does not have React in dependencies, but relies on useState/useEffect hooks. You should pass them explicitly to create atom factory:
+At the moment this library does not have React in dependencies, but relies on useSyncExternalStore hook (React 18+). You should pass it explicitly to create atom factory:
 
 ```typescript
 import { createAtomFactory, createSingularityFactory } from 'react-singularity';
 
-export const atom = createAtomFactory({ useState, useEffect });
-export const singularity = createSingularityFactory({ useState, useEffect });
+export const atom = createAtomFactory({ useSyncExternalStore });
+export const singularity = createSingularityFactory({ useSyncExternalStore });
 ```
 
 ## Atom

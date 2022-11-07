@@ -13,10 +13,9 @@ export interface Atom<T> {
 }
 
 export const createAtomFactory = (params: {
-  useState: typeof React.useState;
-  useEffect: typeof React.useEffect;
+  useSyncExternalStore: typeof React.useSyncExternalStore;
 }) => {
-  const { useState, useEffect } = params;
+  const { useSyncExternalStore } = params;
 
   return <T>(def: T): Atom<T> => {
     let value = def;
@@ -27,11 +26,7 @@ export const createAtomFactory = (params: {
 
     return {
       use: (selector = identity) => {
-        const [x, setX] = useState(selector(get()));
-
-        useEffect(() => sub.subscribe((v) => setX(selector(v))), [selector]);
-
-        return x;
+        return useSyncExternalStore(sub.subscribe, () => selector(get()));
       },
 
       get,

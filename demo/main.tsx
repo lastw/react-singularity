@@ -1,12 +1,12 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { SingularityApp } from './examples/singularity';
 import { SimpleCounterApp } from './examples/simple-counter';
 import { InteractiveGridApp } from './examples/interactive-grid';
 import { InteractiveGridAtomPerPixelApp } from './examples/interactive-grid-atom-per-pixel';
 import { config, buildQuery } from './utils';
 
-const { concurrent, example } = config;
+const { example } = config;
 
 const Example = (() => {
   switch (example) {
@@ -39,9 +39,5 @@ const App = () => (
   </>
 );
 
-if (concurrent) {
-  // @ts-ignore
-  ReactDOM.unstable_createRoot(document.querySelector('#root')).render(<App />);
-} else {
-  ReactDOM.render(<App />, document.querySelector('#root'));
-}
+const root = createRoot(document.querySelector('#root')!);
+root.render(<App />);

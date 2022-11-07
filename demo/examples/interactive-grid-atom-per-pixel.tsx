@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { atom, config, buildQuery, singularity } from '../utils';
 
-const { size, replicas, concurrent } = config;
+const { size, replicas } = config;
 
 const $hcol = atom(-1); // highlighted column index
 const $hrow = atom(-1); // highlighted row index
@@ -58,10 +58,6 @@ const Header = () => {
         <a href={buildQuery({ size: 80, replicas: 5 })}>80×80×5</a>,{' '}
         <a href={buildQuery({ size: 160, replicas: 1 })}>160×160×1</a> (you can set any other values
         via URL)
-      </p>
-      <p>
-        Concurrent mode: {String(concurrent)}.{' '}
-        <a href={buildQuery({ concurrent: !concurrent })}>Set to {String(!concurrent)}</a>
       </p>
     </div>
   );

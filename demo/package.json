@@ -7,10 +7,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.8",
     "parcel-bundler": "^1.12.4",
-    "react": "0.0.0-experimental-33c3af284",
-    "react-dom": "0.0.0-experimental-33c3af284"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

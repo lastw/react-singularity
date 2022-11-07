@@ -15,11 +15,10 @@ export interface Singularity<T> {
 }
 
 export const createSingularityFactory = (params: {
-  useState: typeof React.useState;
-  useEffect: typeof React.useEffect;
+  useSyncExternalStore: typeof React.useSyncExternalStore;
 }) => {
   const atom = createAtomFactory(params);
-  const { useState, useEffect } = params;
+  const { useSyncExternalStore } = params;
 
   return <T>(def: (key: Key) => T): Singularity<T> => {
     const atoms: Record<Key, Atom<T>> = {};
@@ -30,17 +29,7 @@ export const createSingularityFactory = (params: {
 
     return {
       use: (key: Key, selector = identity) => {
-        const [x, setX] = useState(() => selector(ensure(key).get()));
-        const [prevKey, setPrevKey] = useState(key);
-
-        useEffect(() => ensure(key).subscribe((v) => setX(selector(v))), [key, selector]);
-
-        if (prevKey !== key) {
-          setPrevKey(key);
-          setX(selector(ensure(key).get()));
-        }
-
-        return x;
+        return useSyncExternalStore(ensure(key).subscribe, () => selector(get(key)));
       },
 
       get,
